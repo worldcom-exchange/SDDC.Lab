@@ -1,9 +1,9 @@
-     _________________  _____       _           _
-    /  ___|  _  \  _  \/  __ \     | |         | |                   Developed By
-    \ `--.| | | | | | || /  \/     | |     __ _| |__          --------------------------
-     `--. \ | | | | | || |         | |    / _` | '_ \         Rutger Blom  &  Luis Chanu
-    /\__/ / |/ /| |/ / | \__/\  _  | |___| (_| | |_) |        NSX vExpert     VCDX #246
-    \____/|___/ |___/   \____/ (_) \_____/\__,_|_.__/ 
+     _________________  _____       _           _              _____ 
+    /  ___|  _  \  _  \/  __ \     | |         | |            |____ |                Developed By
+    \ `--.| | | | | | || /  \/     | |     __ _| |__    __   __   / /         --------------------------
+     `--. \ | | | | | || |         | |    / _` | '_ \   \ \ / /   \ \         Rutger Blom  &  Luis Chanu
+    /\__/ / |/ /| |/ / | \__/\  _  | |___| (_| | |_) |   \ V /.___/ /         NSX vExpert     VCDX #246
+    \____/|___/ |___/   \____/ (_) \_____/\__,_|_.__/     \_/ \____/ 
 
 # Deploying your first SDDC.Lab Pod
 
@@ -22,17 +22,17 @@
 
 ## Configure your physical network (TBD)
 
-## Configure your physical ESXi host
-Currently the scripts supports deploying Pods on a standalone ESXi host. This host must be running ESXi version 6.7 or later. After installing ESXi make sure that you configure the following:
+## Configure your physical ESXi host(s)
+The scripts support deploying Pods on a standalone ESXi host or on ESXi managed by vCenter. ESXi/vCenter must be on version 6.7 or newer. Regardless of deployment target you need to make sure that the following is availble to the ESXi host(s):
 
-* A datastore
-* A portgroup configured with the VLAN ID of the Router Uplink segment (e.g. Lab-Routers)
+* A datastore where the Pod VMs will be stored
+* A portgroup configured with the VLAN ID of the Router Uplink segment (i.e. Lab-Routers)
 
 ## Install your Ansible controller
 
 The Ansible controller is the machine from which you will run the Ansible scripts. We recommend installing a modern version of [Ubuntu](https://ubuntu.com/download) on a dedicated virtual machine. This VM can be connected to any VLAN as long as it:
 
-* Can access the physical ESXi host
+* Can access the physical ESXi host or the vCenter Server
 * Can reach the Router Uplink segment and the Pod networks behind the [VyOS](https://www.vyos.io/) router
 * Has Internet access
 
@@ -41,10 +41,14 @@ After you've installed the Ubuntu OS and applied the latest updates, some additi
 version 2.10.x.
 
 1. Python, pip, and xorriso:  
-**sudo apt install python3 python3-pip xorriso git**
+**udo apt install python3 python3-pip xorriso git**
 
 1. Ansible and the required Python modules:  
 **sudo pip3 install ansible pyvim pyvmomi netaddr jmespath dnspython**
+
+1. The required Ansible modules
+**ansible-galaxy collection install community.general**
+**ansible-galaxy collection install community.vmware**
 
 1. The SDDC.Lab repository cloned to an appropriate location on your Ubuntu machine (e.g. $HOME) with:  
 **git clone https://github.com/rutgerblom/SDDC.Lab.git**
@@ -94,15 +98,18 @@ There are many settings that you ***can*** change, but only a few that you ***mu
 
 - The table below contains the settings that ***must*** match your environment:
 
-    | Setting                                  | Description                                                                                                          | Default Value
-    | :---                                     | :---                                                                                                                 | :---
-    | Common.Password.Physical                 | The root password of your physical ESXi host                                                                         | VMware1!
-    | Common.DNS.Server1.IPv4/IPv6             | The IP address of the DNS server to be used by the nested environment. Only change this if Deploy.DNSServer == false | 10.203.0.5
-    | Common.NTP.Server1.IPv4/IPv6             | The IP address of the NTP server to be used by the nested environment. Only change this if Deploy.DNSServer == false | 10.203.0.5
-    | TargetConfig.Host.FQDN                   | The FQDN of your physical ESXi host                                                                                  | Host32.NetLab.Home
-    | TargetConfig.Host.Datastore              | The datastore on your physical ESXi host                                                                             | Local_VMs
-    | TargetConfig.Host.PortGroup.RouterUplink | The portgroup that connects your Pod to your physical network                                                        | Lab-Routers
-    | Nested_Router.Protocol                   | The routing method for routing traffic between your Pod and your physical network                                    | OSPF
+    | Setting                                          | Description                                                                                                          | Default Value
+    | :---                                             | :---                                                                                                                 | :---
+    | Common.Password.Physical                         | The password used to log in as root (standalone ESXi) or as administrator@vsphere.local (vCenter)                    | VMware1!
+    | Common.DNS.Server1.IPv4/IPv6                     | The IP address of the DNS server to be used by the nested environment. Only change this if Deploy.DNSServer == false | 10.203.0.5
+    | Common.NTP.Server1.IPv4/IPv6                     | The IP address of the NTP server to be used by the nested environment. Only change this if Deploy.DNSServer == false | 10.203.0.5
+    | TargetConfig.Deployment                          | The deployment target. Can be either "Host" or "vCenter                                                              | Host    
+    | TargetConfig.Host/vCenter.FQDN                   | The FQDN of your physical ESXi host or your vCenter Server                                                           | Host32.NetLab.Home/NetLab-vCenter.NetLab.Local 
+    | TargetConfig.vCenter.DataCenter                  | The DataCenter object where the lab Pods are deployed (only required when deploying to vCenter)                      | SDDC
+    | TargetConfig.vCenter.Cluster                     | The vSphere cluster within DataCenter wher the lab Pods are deployed (only required when deploying to vCenter)       | Lab-Cluster 
+    | TargetConfig.Host/vCenter.Datastore              | The datastore that will be used to store Pod VMs                                                                     | Local_VMs/Shared_VMs
+    | TargetConfig.Host/vCenter.PortGroup.RouterUplink | The portgroup that connects your Pod to the transit segment (e.g. the physical network)                              | Lab-Routers
+    | Nested_Router.Protocol                           | The routing method for routing traffic between your Pod and your physical network                                    | BOTH
 
 Change either your environment or these settings so that they match.
 
