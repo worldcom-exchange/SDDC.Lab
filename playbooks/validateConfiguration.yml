@@ -214,6 +214,16 @@
 ##
 ## Verify Target.FQDN (vCenter) by requesting list of VMs
 ##
+#
+    - name: Debug target variable
+      vars:
+        msg: |
+          Target.FQDN = "{{ Target.FQDN }}"
+          Target.User = "{{ Target.User }}"
+          Target.Password = "{{ Target.Password }}"
+      debug:
+         var: msg
+
     - name: Gather all registered VMs from vCenter Server (vCenter Deployment)
       community.vmware.vmware_vm_info:
         hostname: "{{ Target.FQDN }}"
