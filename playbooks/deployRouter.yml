@@ -24,23 +24,17 @@
           *****************************************************************************************************
           ****************************************** ERROR MESSAGE ********************************************
           *****************************************************************************************************
-
             A valid "Pod-XXX-Config.yml" file is required in order for this playbook to run.
-
             Please verify:
             ==============
               1) You supplied a valid Pod-XXX-Config.yml file via the ansible-playbook -e "@Pod-XXX-Config.yml"
                  command-line option.  Here is an example of a how to load a Pod-XXX-Config.yml file that is
                  located in your home directory:
                                     ansible-playbook -e "@~/Pod-XXX-Config.yml" deploy.yml
-
               2) The Pod-XXX-Config.yml file provided was created using the playbooks/createPodConfig.yml script.
                  All Pod configuration files used to deploy labs MUST be generated using that script.
-
               3) You included the proper path with the "-e" option to the Pod-XXX-Config.yml file.
-
               4) You prefaced the file name in the "-e" option with a '@', as shown in the example above.
-
           *****************************************************************************************************
       when:
         - Valid_Pod_Config_File is not defined
@@ -55,12 +49,8 @@
         seconds: "{{ DEBUG.DisplayDelayInSeconds }}"
         prompt: |
           ================================ Display Variables For Pod {{ '%03d'|format(Pod.Number|int) }} ==================================
-
-
                                      Ansible Playbook: {{ ansible_play_name }}
-
                                     Target.Deployment: {{ Target.Deployment }}
-
                                           Target.FQDN: {{ Target.FQDN }}
                                           Target.User: {{ Target.User }}
                                       Target.Password: {{ Target.Password }}
@@ -71,17 +61,13 @@
                                       Target.VMFolder: {{ Target.VMFolder }}
                                      Target.ISOFolder: {{ Target.ISOFolder }}
                                     Target.TempFolder: {{ Target.TempFolder }}
-
                           Target.PortGroup.Trunk.Name: {{ Target.PortGroup.Trunk.Name }}
                           Target.PortGroup.Trunk.VLAN: {{ Target.PortGroup.Trunk.VLAN }}
                     Target.PortGroup.Management.Name : {{ Target.PortGroup.Management.Name }}
                     Target.PortGroup.Management.VLAN : {{ Target.PortGroup.Management.VLAN }}
-
                        Deploy.Software.Router.Version: {{ Deploy.Software.Router.Version }}
-
             Deploy.Software.Options.UseLocalInstaller: {{ Deploy.Software.Options.UseLocalInstaller }}
             Deploy.Software.Options.KeepNewInstallers: {{ Deploy.Software.Options.KeepNewInstallers }}
-
           =================================================================================================
       when:
         - DEBUG.DisplayVariables == true

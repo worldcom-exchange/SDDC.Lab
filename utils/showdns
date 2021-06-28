@@ -3,9 +3,9 @@ echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 echo @@_________________Query DNS Server via IPv4 Transport__________________@@
 echo @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 echo @@
-dig @10.203.0.5 AXFR sddc.lab.
-dig @10.203.0.5 AXFR 203.10.in-addr.arpa.
-dig @10.203.0.5 AXFR d.f.ip6.arpa.
+dig @10.225.0.5 AXFR sddc.lab.
+dig @10.225.0.5 AXFR 225.10.in-addr.arpa.
+dig @10.225.0.5 AXFR d.f.ip6.arpa.
 
 
 echo
